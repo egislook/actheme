@@ -1,5 +1,6 @@
 module.exports = {
   c: 'center',
   col: 'column',
-  sb: 'space-between'
+  sb: 'space-between',
+  ts: 'transparent'
 }
