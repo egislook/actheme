@@ -9,4 +9,6 @@ module.exports = {
   sa: 'space-around',
   
   ab: 'absolute',
+
+  hd: 'hidden'
 }
