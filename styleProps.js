@@ -121,4 +121,5 @@ module.exports = {
   tds: 'textDecorationStyle',
   tdc: 'textDecorationColor',
   wd: 'writingDirection'
+  ta: 'textTransform'
 }

@@ -10,5 +10,7 @@ module.exports = {
   
   ab: 'absolute',
 
-  hd: 'hidden'
+  hd: 'hidden',
+  uc: 'uppercase'
+
 }
