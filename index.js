@@ -3,6 +3,7 @@ const RN = require('react-native')
 const styleProps = require('./styleProps')
 const styleValues = require('./styleValues')
 const defaultTheme = require('./theme')
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 module.exports = {
   create, Comp, fustyle, set
@@ -148,17 +149,29 @@ export function fustyle(obj, style = {}){
   }
 
   const styles = classes.reduce((obj, item) => {
-    let [props, value] = item.split(':')
+    let [props, value] = item.split(":");
 
-    props.split(',').map( prop => {
-      prop = styleProps[prop] || prop
-      value = styleValues[value] || value
-      obj[prop] = isNaN(value) ? themeValue(prop, value) : parseFloat(value)
-      return prop
-    })
+    props.split(",").map(prop => {
+      prop = styleProps[prop] || prop;
+      value = styleValues[value] || value;
 
-    return obj
-  }, style)
+      let [newValue, scale] = (!/\,.*\,/.test(value) && value.split(",")) || [];
+      scale = (scale && parseFloat(scale)) || 0.3;
+      value = newValue || value;
+
+      if (/^s\d/.test(value)) {
+        value = value.replace(/s/, "");
+        obj[prop] = parseFloat(value);
+      } else if (isNaN(value)) {
+        obj[prop] = themeValue(prop, value);
+      } else {
+        obj[prop] = moderateScale(parseFloat(value), scale);
+      }
+      return prop;
+    });
+
+    return obj;
+  }, style);
 
   return styles
 }

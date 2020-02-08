@@ -10,5 +10,8 @@
   "bugs": {
     "url": "https://github.com/egislook/actheme/issues"
   },
-  "homepage": "https://github.com/egislook/actheme#readme"
+  "homepage": "https://github.com/egislook/actheme#readme",
+  "dependencies": {
+    "react-native-size-matters": "^0.3.0"
+  }
 }
