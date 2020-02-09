@@ -11,6 +11,9 @@ module.exports = {
   ab: 'absolute',
 
   hd: 'hidden',
-  uc: 'uppercase'
+  uc: 'uppercase',
+
+  cp: 'capitalize',
+  ul: 'underline'
 
 }
