@@ -23,39 +23,48 @@ export function create(comps, compType){
   const { styles, dynamics, extras } = getStyles(comps)
   // Creates Elements
   return Object.keys(comps).reduce((obj, key) => {
-    const { type, comp, dys, animated, ...compProps } = getProps(comps[key], 'comp')
+    const { type, comp, dys, animated, refered, extra, ...compProps } = getProps(comps[key], 'comp')
     // Sets Node
     const Node = type 
       ? animated ? RN['Animated'][type] : RN[type] 
       : comp
 
-    key === 'Tadam' && console.log({ type })
-
     if(!Object.keys(compProps).length && !dys){
       obj[key] = type ? Node : comp
-      return obj;
+      return obj
     }
 
     // Stores Element to object with styling
-    obj[key] = props => {
+    obj[key] = !refered 
+      ? props => {
+          const [style, exProps] = getModifiedProps(props)
+          return <Node {...props} {...exProps} style={style} />
+        }
+      : React.forwardRef((props, ref) => {
+          const [style, exProps] = getModifiedProps(props)
+          return <Node ref={ref} {...props} {...exProps} style={style} />
+        })
+
+    return obj
+    
+    // Returns modified styles and props
+    function getModifiedProps(props){
       let style = styles[key]
-      const extraProps = {}
+      const exProps = extra || {}
       // Sets dynamic styling and properties
       if(dys){
-        const activeProps = Object.keys(props).filter(prop => !!props[prop])
-        style = [style, RN.StyleSheet.flatten(activeProps.slice().map(prop => dynamics[key][prop]))]
-        extras[key] && activeProps.reduce((obj, prop) => Object.assign(obj, extras[key][prop]), extraProps)
+        const activeProps = Object.keys({ ...exProps, ...props })
+          .filter(prop => (Boolean(props[prop]) || Boolean(exProps[prop])) )
+        style = RN.StyleSheet.flatten([style, RN.StyleSheet.flatten(activeProps.slice().map(prop => dynamics[key][prop]))])
+        extras[key] && activeProps.reduce((obj, prop) => Object.assign(obj, extras[key][prop]), exProps)
       } 
       // Sets fustyle and style
-      if(props.fustyle || props.style)
-        style = [style, props.fustyle && fustyle(props.fustyle), props.style]
-      // Sets extra props and returns node
-      if(Object.keys(extraProps).length)
-        return <Node {...props} style={style} {...extraProps} />
+      if(props.fustyle || props.style || exProps.style)
+        style = [style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style]
 
-      return <Node {...props} style={style} />
+      return [style, exProps]
     }
-    return obj
+
   }, {})
 }
 
@@ -73,9 +82,14 @@ function getStyles(rules){
           case 'string':
             return Object.assign(dy, { [prop]: fustyle(value) })
           case 'object':
-            const [stl, props] = value
+            let [stl, props] = value
+            if(!props){
+              props = stl
+              stl = null
+            }
+            console.log({ stl, props })
             extras[key] = Object.assign((extras[key] || {}), {[prop]: props})
-            return Object.assign(dy, { [prop]: fustyle(stl) })
+            return stl ? Object.assign(dy, { [prop]: fustyle(stl) }) : dy
         }
       }, {}))
     }
@@ -102,14 +116,23 @@ function getProps(item){
       if(!Array.isArray(item)) return item.$$typeof ? { comp: item } : { dys: item, type: 'View' }
       
       let isDys
-      const [ comp, style, dys ] = item
-      isDys = typeof style === 'object'
+      let extra
+      let [ comp, style, dys ] = item
+      isDys = typeof style === 'object' && !Array.isArray(style)
+
+      if(Array.isArray(style)){
+        extra = style[1]
+        style = style[0]
+      }
+
       switch(typeof comp){
         case 'string':
           const animated = comp.includes('Animated')
-          return { type: comp.replace('Animated', ''), animated, style: !isDys && style, dys: isDys && style || dys }
+          const refered = comp.includes('Ref')
+          const type = comp.replace('Animated', '').replace('Ref', '')
+          return { type, animated, refered, style: !isDys && style, dys: isDys && style || dys, extra }
         case 'function':
-          return { comp, style: !isDys && style, dys: isDys && style || dys }
+          return { comp, style: !isDys && style, dys: isDys && style || dys, extra }
       } 
     default:
       console.log('Actheme', 'incorrect item', item)
