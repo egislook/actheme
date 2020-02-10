@@ -3,7 +3,7 @@ const RN = require('react-native')
 const styleProps = require('./styleProps')
 const styleValues = require('./styleValues')
 const defaultTheme = require('./theme')
-import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+import { moderateScale } from 'react-native-size-matters'
 
 module.exports = {
   create, Comp, fustyle, set
@@ -28,27 +28,33 @@ export function create(comps, compType){
     const Node = type 
       ? animated ? RN['Animated'][type] : RN[type] 
       : comp
-    // Stores Element to object with styling
-    obj[key] = compProps.style || dys
-      ? props => {
-          let style = styles[key]
-          const extraProps = {}
-          // Sets dynamic styling and properties
-          if(dys){
-            const activeProps = Object.keys(props).filter(prop => !!props[prop])
-            style = [style, RN.StyleSheet.flatten(activeProps.slice().map(prop => dynamics[key][prop]))]
-            extras[key] && activeProps.reduce((obj, prop) => Object.assign(obj, extras[key][prop]), extraProps)
-          } 
-          // Sets fustyle and style
-          if(props.fustyle || props.style)
-            style = [style, props.fustyle && fustyle(props.fustyle), props.style]
-          // Sets extra props and returns node
-          if(Object.keys(extraProps).length)
-            return <Node {...props} style={style} {...extraProps} />
 
-          return <Node {...props} style={style} />
-        } 
-      : comp
+    key === 'Tadam' && console.log({ type })
+
+    if(!Object.keys(compProps).length && !dys){
+      obj[key] = type ? Node : comp
+      return obj;
+    }
+
+    // Stores Element to object with styling
+    obj[key] = props => {
+      let style = styles[key]
+      const extraProps = {}
+      // Sets dynamic styling and properties
+      if(dys){
+        const activeProps = Object.keys(props).filter(prop => !!props[prop])
+        style = [style, RN.StyleSheet.flatten(activeProps.slice().map(prop => dynamics[key][prop]))]
+        extras[key] && activeProps.reduce((obj, prop) => Object.assign(obj, extras[key][prop]), extraProps)
+      } 
+      // Sets fustyle and style
+      if(props.fustyle || props.style)
+        style = [style, props.fustyle && fustyle(props.fustyle), props.style]
+      // Sets extra props and returns node
+      if(Object.keys(extraProps).length)
+        return <Node {...props} style={style} {...extraProps} />
+
+      return <Node {...props} style={style} />
+    }
     return obj
   }, {})
 }
@@ -89,10 +95,11 @@ function getProps(item){
     case 'function':
       return { comp: item }
     case 'string':
+      if(!item.includes(':')) return { type: item }
       const compType = item.includes('ff') || item.includes('fs') ? 'Text' : 'View'
-      return item.includes(':') ? { style: item, type: compType } : { type: item }
+      return { style: item, type: compType }
     case 'object':
-      if(!Array.isArray(item)) return { dys: item, type: 'View' }
+      if(!Array.isArray(item)) return item.$$typeof ? { comp: item } : { dys: item, type: 'View' }
       
       let isDys
       const [ comp, style, dys ] = item
@@ -113,6 +120,8 @@ function getProps(item){
 export function Comp(){ 
   const isComponent = typeof arguments[0] === 'object' && !Array.isArray(arguments[0])
   const args = Array.isArray(arguments[0]) ? arguments[0] : arguments
+
+  console.log(args)
 
   const props = isComponent ? args[0] : {
     comp: args[1] && args[0] || 'View',
@@ -149,24 +158,23 @@ export function fustyle(obj, style = {}){
   }
 
   const styles = classes.reduce((obj, item) => {
-    let [props, value] = item.split(":");
+    let [props, value] = item.split(':')
 
-    props.split(",").map(prop => {
-      prop = styleProps[prop] || prop;
-      value = styleValues[value] || value;
+    props.split(',').map(prop => {
+      prop = styleProps[prop] || prop
+      value = styleValues[value] || value
 
-      let [newValue, scale] = (!/\,.*\,/.test(value) && value.split(",")) || [];
-      scale = (scale && parseFloat(scale)) || 0.3;
-      value = newValue || value;
+      let [newValue, scale] = (!/\,.*\,/.test(value) && value.split(',')) || []
+      scale = (scale && parseFloat(scale)) || theme.scale
+      value = newValue || value
 
       if (/^s\d/.test(value)) {
-        value = value.replace(/s/, "");
-        obj[prop] = parseFloat(value);
-      } else if (isNaN(value)) {
-        obj[prop] = themeValue(prop, value);
-      } else {
-        obj[prop] = moderateScale(parseFloat(value), scale);
-      }
+        value = value.replace(/s/, '')
+        obj[prop] = parseFloat(value)
+      } else if (isNaN(value))
+        obj[prop] = themeValue(prop, value)
+      else
+        obj[prop] = moderateScale(parseFloat(value), scale)
       return prop;
     });
 
