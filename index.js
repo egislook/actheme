@@ -50,7 +50,7 @@ export function create(comps, compType){
     // Returns modified styles and props
     function getModifiedProps(props){
       let style = styles[key]
-      const exProps = extra || {}
+      const exProps = extra && {...extra} || {}
       // Sets dynamic styling and properties
       if(dys){
         const activeProps = Object.keys({ ...exProps, ...props })
@@ -83,11 +83,7 @@ function getStyles(rules){
             return Object.assign(dy, { [prop]: fustyle(value) })
           case 'object':
             let [stl, props] = value
-            if(!props){
-              props = stl
-              stl = null
-            }
-            console.log({ stl, props })
+            if(!props){ props = stl; stl = null }
             extras[key] = Object.assign((extras[key] || {}), {[prop]: props})
             return stl ? Object.assign(dy, { [prop]: fustyle(stl) }) : dy
         }
@@ -121,8 +117,8 @@ function getProps(item){
       isDys = typeof style === 'object' && !Array.isArray(style)
 
       if(Array.isArray(style)){
-        extra = style[1]
-        style = style[0]
+        extra = style[1] || style[0]
+        style = style[1] ? style[0] : null
       }
 
       switch(typeof comp){
@@ -143,8 +139,6 @@ function getProps(item){
 export function Comp(){ 
   const isComponent = typeof arguments[0] === 'object' && !Array.isArray(arguments[0])
   const args = Array.isArray(arguments[0]) ? arguments[0] : arguments
-
-  console.log(args)
 
   const props = isComponent ? args[0] : {
     comp: args[1] && args[0] || 'View',
@@ -190,6 +184,8 @@ export function fustyle(obj, style = {}){
       let [newValue, scale] = (!/\,.*\,/.test(value) && value.split(',')) || []
       scale = (scale && parseFloat(scale)) || theme.scale
       value = newValue || value
+
+      // obj[prop] = isNaN(value) ? themeValue(prop, value) : parseFloat(value)
 
       if (/^s\d/.test(value)) {
         value = value.replace(/s/, '')
