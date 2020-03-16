@@ -6,7 +6,7 @@ const defaultTheme = require('./theme')
 import { moderateScale } from 'react-native-size-matters'
 
 module.exports = {
-  create, Comp, fustyle, set
+  create, Comp, fustyle, set, themeValue
 }
 
 let theme = defaultTheme
@@ -16,6 +16,25 @@ export function set(customTheme){
   customTheme = customTheme || { color: {} } 
   const color = { ...defaultTheme.color, ...customTheme.color }
   theme = { ...defaultTheme, ...customTheme, color }
+  if(theme.alphas) theme.color = setAlphedColors(theme)
+  if(theme.scale) theme.size = setScaledSizes(theme)
+}
+
+export function setAlphedColors(theme){
+  return Object.keys(theme.color).reduce((obj, name) => {
+    const color = theme.color[name]
+    obj[name] = color
+    if (color.includes('rgba') && color.includes('1)'))
+      Object.keys(theme.alphas).forEach(key => {
+        obj[name + key] = color.replace('1)', theme.alphas[key] + ')')
+      })
+    return obj
+  }, {})
+}
+
+export function setScaledSizes(theme){
+  return [...Array(200)].map((n, i) => i + 1)
+    .reduce((obj, n) => Object.assign(obj, { ['s' + n]: n * theme.scale }), { s05: theme.scale / 2 })
 }
 
 export function create(comps, compType){
@@ -170,7 +189,7 @@ export function fustyle(obj, style = {}){
       ), []); break;
 
     default:
-      // console.log('Actheme', 'incorrect fustyle type', typeof obj)
+      console.log('Actheme', 'incorrect fustyle type', typeof obj)
       return {}
   }
 
@@ -181,20 +200,11 @@ export function fustyle(obj, style = {}){
       prop = styleProps[prop] || prop
       value = styleValues[value] || value
 
-      let [newValue, scale] = (!/\,.*\,/.test(value) && value.split(',')) || []
-      scale = (scale && parseFloat(scale)) || theme.scale
-      value = newValue || value
+      obj[prop] = isNaN(value) ? themeValue(value, prop) : theme.moderateScale 
+        ? moderateScale(parseFloat(value), theme.moderateScale) 
+        : parseFloat(value) 
 
-      // obj[prop] = isNaN(value) ? themeValue(prop, value) : parseFloat(value)
-
-      if (/^s\d/.test(value)) {
-        value = value.replace(/s/, '')
-        obj[prop] = parseFloat(value)
-      } else if (isNaN(value))
-        obj[prop] = themeValue(prop, value)
-      else
-        obj[prop] = moderateScale(parseFloat(value), scale)
-      return prop;
+      return prop
     });
 
     return obj;
@@ -204,10 +214,12 @@ export function fustyle(obj, style = {}){
 }
 
 // finds theme value
-function themeValue(prop, value){
+export function themeValue(value, prop){
+  if(/^s\d+$/.test(value))
+    return theme.size[value]
+  
   const lowerProp = prop.toLowerCase()
-  const themeKey = lowerProp.includes('padding') || lowerProp.includes('margin') 
-    ? 'space' : lowerProp.includes('color') ? 'color' : prop
+  const themeKey = lowerProp.includes('color') ? 'color' : prop
   const themeValues = theme[prop] || theme[themeKey]
   return themeValues && themeValues[value] || value
 }

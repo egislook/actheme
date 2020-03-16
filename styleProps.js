@@ -107,7 +107,7 @@ module.exports = {
   fs: 'fontSize',
   ta: 'textAlign',
   c: 'color',
-  fw: 'fontWeight',
+  fb: 'fontWeight', //fontBoldness
   fst: 'fontStyle',
   fv: 'fontVariant',
   tso: 'textShadowOffset',
@@ -124,5 +124,7 @@ module.exports = {
   tt: 'textTransform',
   
   td: 'textDecoration',
-  tdl: 'textDecorationLine'
+  tdl: 'textDecorationLine',
+
+  rm: 'resizeMode',
 }

@@ -14,6 +14,11 @@ module.exports = {
   uc: 'uppercase',
 
   cp: 'capitalize',
-  ul: 'underline'
+  ul: 'underline',
+
+  cv: 'cover',
+
+  norm: 'normal',
+  wp: 'wrap'
 
 }
