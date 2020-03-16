@@ -18,6 +18,8 @@ export function set(customTheme){
   theme = { ...defaultTheme, ...customTheme, color }
   if(theme.alphas) theme.color = setAlphedColors(theme)
   if(theme.scale) theme.size = setScaledSizes(theme)
+  theme.value = themeValue
+  return theme
 }
 
 export function setAlphedColors(theme){
