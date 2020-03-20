@@ -3,7 +3,7 @@ const RN = require('react-native')
 const styleProps = require('./styleProps')
 const styleValues = require('./styleValues')
 const defaultTheme = require('./theme')
-import { moderateScale } from 'react-native-size-matters'
+import DeviceInfo from 'react-native-device-info'
 
 module.exports = {
   create, Comp, fustyle, set, themeValue
@@ -197,20 +197,29 @@ export function fustyle(obj, style = {}){
 
   const styles = classes.reduce((obj, item) => {
     let [props, value] = item.split(':')
+    let prefix
+    
+    if(!!props.includes('@')){
+      const prefixProps = props.split('@')
+      prefix = prefixProps.shift()
+
+      console.log(prefix)
+      if(devicePrefix() !== prefix)
+        return obj
+      props = prefixProps.shift()
+    }
 
     props.split(',').map(prop => {
       prop = styleProps[prop] || prop
       value = styleValues[value] || value
 
-      obj[prop] = isNaN(value) ? themeValue(value, prop) : theme.moderateScale 
-        ? moderateScale(parseFloat(value), theme.moderateScale) 
-        : parseFloat(value) 
-
+      obj[prop] = isNaN(value) ? themeValue(value, prop) : parseFloat(value)
+        // : theme.moderateScale ? moderateScale(parseFloat(value), theme.moderateScale) 
       return prop
-    });
+    })
 
-    return obj;
-  }, style);
+    return obj
+  }, style)
 
   return styles
 }
@@ -224,4 +233,19 @@ export function themeValue(value, prop){
   const themeKey = lowerProp.includes('color') ? 'color' : prop
   const themeValues = theme[prop] || theme[themeKey]
   return themeValues && themeValues[value] || value
+}
+
+// Device prefix
+export function devicePrefix(){
+  const dimen = RN.Dimensions.get('window')
+
+  if(RN.Platform.OS === 'ios' && !RN.Platform.isPad && !RN.Platform.isTVOS &&
+    (dimen.height === 812 || dimen.width === 812 || (dimen.height === 896 || dimen.width === 896)))
+      return 'x'
+
+  if(DeviceInfo.hasNotch()) return 'n'
+  if(RN.Platform.OS === 'ios') return 'i'
+  if(RN.Platform.OS === 'android') return 'a'
+
+  return
 }
