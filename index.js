@@ -233,9 +233,12 @@ export function fustyle(obj, style = {}){
 }
 
 // finds theme value
-export function themeValue(value, prop){
-  if(/^-?s\d*\.?\d{1,2}$/.test(value))
-    return value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value]
+export function themeValue(value, prop, scale = 4){
+  if(/^-?s\d*\.?\d{1,2}$/.test(value)){
+    const size = theme.size && (value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value])
+    if(!size) console.log(value, prop, scale)
+    return !size ? Number(value.replace('s', '')) * scale : size
+  }
   
   const lowerProp = prop.toLowerCase()
   const themeKey = lowerProp.includes('color') ? 'color' : prop
