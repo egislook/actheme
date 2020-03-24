@@ -236,8 +236,7 @@ export function fustyle(obj, style = {}){
 export function themeValue(value, prop, scale = 4){
   if(/^-?s\d*\.?\d{1,2}$/.test(value)){
     const size = theme.size && (value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value])
-    if(!size) console.log(value, prop, scale)
-    return !size ? Number(value.replace('s', '')) * scale : size
+    return !size ? Number(value.replace('s', '')) * (theme.scale || scale) : size
   }
   
   const lowerProp = prop.toLowerCase()
