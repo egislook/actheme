@@ -36,7 +36,16 @@ export function setAlphedColors(theme){
 
 export function setScaledSizes(theme){
   return [...Array(200)].map((n, i) => i + 1)
-    .reduce((obj, n) => Object.assign(obj, { ['s' + n]: n * theme.scale }), { s05: theme.scale / 2 })
+    .reduce((obj, n) => Object.assign(obj, { 
+      ['s' + n]: n * theme.scale,
+      ['s' + (n + 0.25)]: (n + 0.25) * theme.scale,
+      ['s' + (n + 0.5)]: (n + 0.5) * theme.scale,
+      ['s' + (n + 0.75)]: (n + 0.75) * theme.scale,
+    }), { 
+      ['s0.25']: theme.scale * 0.25, 
+      ['s0.5']: theme.scale * 0.5,
+      ['s0.5']: theme.scale * 0.75 
+    })
 }
 
 export function create(comps, compType){
@@ -203,7 +212,6 @@ export function fustyle(obj, style = {}){
       const prefixProps = props.split('@')
       prefix = prefixProps.shift()
 
-      console.log(prefix)
       if(devicePrefix() !== prefix)
         return obj
       props = prefixProps.shift()
@@ -226,7 +234,7 @@ export function fustyle(obj, style = {}){
 
 // finds theme value
 export function themeValue(value, prop){
-  if(/^-?s\d+$/.test(value))
+  if(/^-?s\d*\.?\d{1,2}$/.test(value))
     return value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value]
   
   const lowerProp = prop.toLowerCase()
