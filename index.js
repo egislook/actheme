@@ -6,7 +6,11 @@ const defaultTheme = require('./theme')
 import DeviceInfo from 'react-native-device-info'
 
 module.exports = {
-  create, Comp, fustyle, set, themeValue
+  create, Comp, fustyle, set, 
+  themeValue,
+  devicePrefix,
+  value: themeValue, 
+  device: devicePrefix
 }
 
 let theme = defaultTheme
@@ -19,6 +23,7 @@ export function set(customTheme){
   if(theme.alphas) theme.color = setAlphedColors(theme)
   if(theme.scale) theme.size = setScaledSizes(theme)
   theme.value = themeValue
+  theme.device = devicePrefix
   return theme
 }
 
@@ -212,8 +217,7 @@ export function fustyle(obj, style = {}){
       const prefixProps = props.split('@')
       prefix = prefixProps.shift()
 
-      if(devicePrefix() !== prefix)
-        return obj
+      if(devicePrefix() !== prefix) return obj
       props = prefixProps.shift()
     }
 
@@ -236,7 +240,7 @@ export function fustyle(obj, style = {}){
 export function themeValue(value, prop, scale = 4){
   if(/^-?s\d*\.?\d{1,2}$/.test(value)){
     const size = theme.size && (value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value])
-    return !size ? Number(value.replace('s', '')) * (theme.scale || scale) : size
+    return !size ? Number(value.replace('s', '')) * (scale || theme.scale) : size
   }
   
   const lowerProp = prop.toLowerCase()
@@ -246,16 +250,20 @@ export function themeValue(value, prop, scale = 4){
 }
 
 // Device prefix
-export function devicePrefix(){
+export function devicePrefix(value){
   const dimen = RN.Dimensions.get('window')
 
-  if(RN.Platform.OS === 'ios' && !RN.Platform.isPad && !RN.Platform.isTVOS &&
-    (dimen.height === 812 || dimen.width === 812 || (dimen.height === 896 || dimen.width === 896)))
-      return 'x'
+  return value ? value.charAt(0) === getPrefix() : getPrefix()
+  
+  function getPrefix(){
+    if(RN.Platform.OS === 'ios' && !RN.Platform.isPad && !RN.Platform.isTVOS &&
+      (dimen.height === 812 || dimen.width === 812 || (dimen.height === 896 || dimen.width === 896)))
+        return 'x'
 
-  if(DeviceInfo.hasNotch()) return 'n'
-  if(RN.Platform.OS === 'ios') return 'i'
-  if(RN.Platform.OS === 'android') return 'a'
+    if(DeviceInfo.hasNotch()) return 'n'
+    if(RN.Platform.OS === 'ios') return 'i'
+    if(RN.Platform.OS === 'android') return 'a'
 
-  return
+    return
+  }
 }
