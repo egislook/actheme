@@ -48,7 +48,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var React = require('react');
 
-var RN = require('react-native');
+var RN = require(typeof document != 'undefined' ? 'react-native-web' : 'react-native');
 
 var styleProps = require('./styleProps');
 
