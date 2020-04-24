@@ -46,9 +46,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var WEB = typeof navigator === 'undefined';
+
 var React = require('react');
 
-var RN = require(typeof document != 'undefined' ? 'react-native-web' : 'react-native');
+var RN = require(WEB ? 'react-native-web' : 'react-native');
 
 var styleProps = require('./styleProps');
 

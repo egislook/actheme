@@ -1,5 +1,6 @@
+const WEB = typeof navigator === 'undefined'
 const React = require('react')
-const RN = require(typeof document != 'undefined' ? 'react-native-web' : 'react-native')
+const RN = require(WEB ? 'react-native-web' : 'react-native')
 const styleProps = require('./styleProps')
 const styleValues = require('./styleValues')
 const defaultTheme = require('./theme')
