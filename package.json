@@ -1,5 +1,5 @@
 {
-  "version": "0.0.18",
+  "version": "0.0.19",
   "name": "actheme",
   "scripts": {
     "start": "babel --watch src/ --out-dir ./",
