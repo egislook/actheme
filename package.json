@@ -1,6 +1,13 @@
 {
   "version": "0.0.18",
   "name": "actheme",
+  "scripts": {
+    "start": "babel --watch src/ --out-dir ./",
+    "format": "prettier --tab-width 2 --jsx-bracket-same-line true --single-quote --print-width 100 true --semi false --write \"src/**/*.js\""
+  },
+  "peerDependencies": {
+    "react": "16.*"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/egislook/actheme.git"
@@ -10,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/egislook/actheme/issues"
   },
-  "homepage": "https://github.com/egislook/actheme#readme"
+  "homepage": "https://github.com/egislook/actheme#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4"
+  }
 }
