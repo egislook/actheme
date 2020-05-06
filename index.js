@@ -32,7 +32,7 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
@@ -46,11 +46,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var WEB = typeof navigator === 'undefined';
-
 var React = require('react');
-
-var RN = require(WEB ? 'react-native-web' : 'react-native');
 
 var styleProps = require('./styleProps');
 
@@ -69,17 +65,27 @@ module.exports = {
   device: devicePrefix,
   style: fustyle
 };
+
+var RN = function () {
+  try {
+    return require('react-native');
+  } catch (error) {
+    return eval('require("react-native-web")');
+  }
+}();
+
 var theme = defaultTheme;
 
-function set(customTheme) {
+function set(customTheme, reactNative) {
+  // if(!!Object.keys(RN).length) return
   console.log('Actheme', 'set');
   customTheme = customTheme || {
     color: {}
   };
 
-  var color = _objectSpread({}, defaultTheme.color, {}, customTheme.color);
+  var color = _objectSpread(_objectSpread({}, defaultTheme.color), customTheme.color);
 
-  theme = _objectSpread({}, defaultTheme, {}, customTheme, {
+  theme = _objectSpread(_objectSpread(_objectSpread({}, defaultTheme), customTheme), {}, {
     color: color
   });
   if (theme.alphas) theme.color = setAlphedColors(theme);
@@ -113,7 +119,8 @@ function setScaledSizes(theme) {
 }
 
 function create(comps, compType) {
-  // Creates StyleSheet
+  console.log('Actheme create'); // Creates StyleSheet
+
   var _getStyles = getStyles(comps),
       styles = _getStyles.styles,
       dynamics = _getStyles.dynamics,
@@ -167,7 +174,7 @@ function create(comps, compType) {
       var exProps = extra && _objectSpread({}, extra) || {}; // Sets dynamic styling and properties
 
       if (dys) {
-        var activeProps = Object.keys(_objectSpread({}, exProps, {}, props)).filter(function (prop) {
+        var activeProps = Object.keys(_objectSpread(_objectSpread({}, exProps), props)).filter(function (prop) {
           return Boolean(props[prop]) || Boolean(exProps[prop]);
         });
         style = RN.StyleSheet.flatten([style, RN.StyleSheet.flatten(activeProps.slice().map(function (prop) {

@@ -1,6 +1,4 @@
-const WEB = typeof navigator === 'undefined'
 const React = require('react')
-const RN = require(WEB ? 'react-native-web' : 'react-native')
 const styleProps = require('./styleProps')
 const styleValues = require('./styleValues')
 const defaultTheme = require('./theme')
@@ -14,9 +12,11 @@ module.exports = {
   style: fustyle
 }
 
+const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
 let theme = defaultTheme
 
-export function set(customTheme){
+export function set(customTheme, reactNative){
+  // if(!!Object.keys(RN).length) return
   console.log('Actheme', 'set')
   customTheme = customTheme || { color: {} }
   const color = { ...defaultTheme.color, ...customTheme.color }
@@ -55,6 +55,7 @@ export function setScaledSizes(theme){
 }
 
 export function create(comps, compType){
+  console.log('Actheme create')
   // Creates StyleSheet
   const { styles, dynamics, extras } = getStyles(comps)
   // Creates Elements
