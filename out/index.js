@@ -124,7 +124,7 @@ function setScaledSizes(theme) {
 }
 
 function create(comps, compType) {
-  console.log('Actheme create', 'theme: ' + !!theme.value('title', 'color')); // Creates StyleSheet
+  console.log('Actheme create', 'theme: ' + !!themeValue('title', 'color')); // Creates StyleSheet
 
   var _getStyles = getStyles(comps),
       styles = _getStyles.styles,

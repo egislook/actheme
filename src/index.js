@@ -57,7 +57,7 @@ export function setScaledSizes(theme){
 }
 
 export function create(comps, compType){
-  console.log('Actheme create', 'theme: ' + !!theme.value('title', 'color'))
+  console.log('Actheme create', 'theme: ' + !!themeValue('title', 'color'))
   // Creates StyleSheet
   const { styles, dynamics, extras } = getStyles(comps)
   // Creates Elements
