@@ -12,13 +12,11 @@ module.exports = {
   style: fustyle
 }
 
-console.log('WTF')
-
 const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
 let theme = defaultTheme, Comps = {}, ready
 
 export function set(customTheme, comps = {}){
-  if(ready) return
+  // if(ready) return
   console.log('Actheme', 'set')
   customTheme = customTheme || { color: {} }
   Comps = comps
@@ -59,7 +57,7 @@ export function setScaledSizes(theme){
 }
 
 export function create(comps, compType){
-  console.log('Actheme create')
+  console.log('Actheme create', 'theme: ' + !!theme.value('title', 'color'))
   // Creates StyleSheet
   const { styles, dynamics, extras } = getStyles(comps)
   // Creates Elements

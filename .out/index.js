@@ -48,11 +48,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var React = require('react');
 
-var styleProps = require('./styleProps');
+var styleProps = require('../styleProps');
 
-var styleValues = require('./styleValues');
+var styleValues = require('../styleValues');
 
-var defaultTheme = require('./theme');
+var defaultTheme = require('../theme');
 
 module.exports = {
   create: create,
@@ -80,7 +80,7 @@ var theme = defaultTheme,
 
 function set(customTheme) {
   var comps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  if (ready) return;
+  // if(ready) return
   console.log('Actheme', 'set');
   customTheme = customTheme || {
     color: {}
@@ -124,7 +124,7 @@ function setScaledSizes(theme) {
 }
 
 function create(comps, compType) {
-  console.log('Actheme create'); // Creates StyleSheet
+  console.log('Actheme create', 'theme: ' + !!theme.value('title', 'color')); // Creates StyleSheet
 
   var _getStyles = getStyles(comps),
       styles = _getStyles.styles,
