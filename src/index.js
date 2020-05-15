@@ -1,7 +1,7 @@
 const React = require('react')
-const styleProps = require('./styleProps')
-const styleValues = require('./styleValues')
-const defaultTheme = require('./theme')
+const styleProps = require('../styleProps')
+const styleValues = require('../styleValues')
+const defaultTheme = require('../theme')
 
 module.exports = {
   create, Comp, fustyle, set,
@@ -12,19 +12,23 @@ module.exports = {
   style: fustyle
 }
 
-const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
-let theme = defaultTheme
+console.log('WTF')
 
-export function set(customTheme, reactNative){
-  // if(!!Object.keys(RN).length) return
+const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
+let theme = defaultTheme, Comps = {}, ready
+
+export function set(customTheme, comps = {}){
+  if(ready) return
   console.log('Actheme', 'set')
   customTheme = customTheme || { color: {} }
+  Comps = comps
   const color = { ...defaultTheme.color, ...customTheme.color }
   theme = { ...defaultTheme, ...customTheme, color }
   if(theme.alphas) theme.color = setAlphedColors(theme)
   if(theme.scale) theme.size = setScaledSizes(theme)
   theme.value = themeValue
   theme.device = devicePrefix
+  ready = true
   return theme
 }
 
@@ -173,24 +177,27 @@ function getProps(item){
   }
 }
 
-export function Comp(){
-  const isComponent = typeof arguments[0] === 'object' && !Array.isArray(arguments[0])
-  const args = Array.isArray(arguments[0]) ? arguments[0] : arguments
+export function Comp(name, alt = 'View'){
+  console.log('comp', Comps && Comps[name])
+  return Comps && Comps[name] || RN[alt]
 
-  const props = isComponent ? args[0] : {
-    comp: args[1] && args[0] || 'View',
-    fustyle: args[1] || args[0],
-    style: args[2]
-  }
-
-  let Node = RN[props.comp]
-  if(props.animated) Node = RN['Animated'][props.comp]
-
-  const style = props.fustyle ? fustyle(props.fustyle, props.style || {}) : props.style
-
-  return isComponent
-    ? <Node style={style} {...props} />
-    : props => <Node style={style} {...props} />
+  // const isComponent = typeof arguments[0] === 'object' && !Array.isArray(arguments[0])
+  // const args = Array.isArray(arguments[0]) ? arguments[0] : arguments
+  //
+  // const props = isComponent ? args[0] : {
+  //   comp: args[1] && args[0] || 'View',
+  //   fustyle: args[1] || args[0],
+  //   style: args[2]
+  // }
+  //
+  // let Node = RN[props.comp]
+  // if(props.animated) Node = RN['Animated'][props.comp]
+  //
+  // const style = props.fustyle ? fustyle(props.fustyle, props.style || {}) : props.style
+  //
+  // return isComponent
+  //   ? <Node style={style} {...props} />
+  //   : props => <Node style={style} {...props} />
 }
 
 export function fustyle(obj, style = {}){
