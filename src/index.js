@@ -150,7 +150,7 @@ function getProps(item){
       return { comp: item }
     case 'string':
       if(!item.includes(':')) return { type: item }
-      const compType = (item.includes('ff') || item.includes('fs') || item.includes('fb') || item.includes('c')) ? 'Text' : 'View'
+      const compType = (item.includes('ff') || item.includes('fs') || item.includes('fb')) ? 'Text' : 'View'
       return { style: item, type: compType }
     case 'object':
       if(!Array.isArray(item)) return item.$$typeof ? { comp: item } : { dys: item, type: 'View' }

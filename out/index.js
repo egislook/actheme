@@ -258,7 +258,7 @@ function getProps(item) {
       if (!item.includes(':')) return {
         type: item
       };
-      var compType = item.includes('ff') || item.includes('fs') || item.includes('fb') || item.includes('c') ? 'Text' : 'View';
+      var compType = item.includes('ff') || item.includes('fs') || item.includes('fb') ? 'Text' : 'View';
       return {
         style: item,
         type: compType
