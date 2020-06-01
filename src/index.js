@@ -3,16 +3,18 @@ const styleProps = require('../styleProps')
 const styleValues = require('../styleValues')
 const defaultTheme = require('../theme')
 
+const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
+
 module.exports = {
   create, Comp, fustyle, set,
   themeValue,
   devicePrefix,
   value: themeValue,
   device: devicePrefix,
-  style: fustyle
+  style: fustyle,
+  dims: key => key ? RN.Dimensions.get('window')[key] : RN.Dimensions.get('window')
 }
 
-const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
 let theme = defaultTheme, Comps = {}, ready, created
 
 export function set(customTheme, comps = {}){

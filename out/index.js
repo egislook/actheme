@@ -54,6 +54,14 @@ var styleValues = require('../styleValues');
 
 var defaultTheme = require('../theme');
 
+var RN = function () {
+  try {
+    return require('react-native');
+  } catch (error) {
+    return eval('require("react-native-web")');
+  }
+}();
+
 module.exports = {
   create: create,
   Comp: Comp,
@@ -63,17 +71,11 @@ module.exports = {
   devicePrefix: devicePrefix,
   value: themeValue,
   device: devicePrefix,
-  style: fustyle
-};
-
-var RN = function () {
-  try {
-    return require('react-native');
-  } catch (error) {
-    return eval('require("react-native-web")');
+  style: fustyle,
+  dims: function dims(key) {
+    return key ? RN.Dimensions.get('window')[key] : RN.Dimensions.get('window');
   }
-}();
-
+};
 var theme = defaultTheme,
     Comps = {},
     ready,
