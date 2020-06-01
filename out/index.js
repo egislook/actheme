@@ -76,7 +76,8 @@ var RN = function () {
 
 var theme = defaultTheme,
     Comps = {},
-    ready;
+    ready,
+    created;
 
 function set(customTheme) {
   var comps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -124,7 +125,11 @@ function setScaledSizes(theme) {
 }
 
 function create(comps, compType) {
-  console.log('Actheme create', 'theme: ' + !!themeValue('title', 'color')); // Creates StyleSheet
+  if (!created) {
+    created = true;
+    console.log('Actheme create', 'ready', ready);
+  } // Creates StyleSheet
+
 
   var _getStyles = getStyles(comps),
       styles = _getStyles.styles,
@@ -251,7 +256,7 @@ function getProps(item) {
       if (!item.includes(':')) return {
         type: item
       };
-      var compType = item.includes('ff') || item.includes('fs') ? 'Text' : 'View';
+      var compType = item.includes('ff') || item.includes('fs') || item.includes('fb') || item.includes('c') ? 'Text' : 'View';
       return {
         style: item,
         type: compType

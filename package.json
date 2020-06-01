@@ -2,6 +2,9 @@
   "version": "0.0.25",
   "name": "actheme",
   "main": "/out/index.js",
+  "babel": {
+    "presets": ["@babel/preset-env", "@babel/preset-react"]
+  },
   "scripts": {
     "start": "babel --watch src/ --out-dir ./out",
     "format": "prettier --tab-width 2 --jsx-bracket-same-line true --single-quote --print-width 100 true --semi false --write \"src/**/*.js\""

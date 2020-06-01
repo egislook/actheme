@@ -13,7 +13,7 @@ module.exports = {
 }
 
 const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
-let theme = defaultTheme, Comps = {}, ready
+let theme = defaultTheme, Comps = {}, ready, created
 
 export function set(customTheme, comps = {}){
   // if(ready) return
@@ -57,7 +57,10 @@ export function setScaledSizes(theme){
 }
 
 export function create(comps, compType){
-  console.log('Actheme create', 'theme: ' + !!themeValue('title', 'color'))
+  if(!created){
+    created = true
+    console.log('Actheme create', 'ready', ready)
+  }
   // Creates StyleSheet
   const { styles, dynamics, extras } = getStyles(comps)
   // Creates Elements
@@ -145,7 +148,7 @@ function getProps(item){
       return { comp: item }
     case 'string':
       if(!item.includes(':')) return { type: item }
-      const compType = item.includes('ff') || item.includes('fs') ? 'Text' : 'View'
+      const compType = (item.includes('ff') || item.includes('fs') || item.includes('fb') || item.includes('c')) ? 'Text' : 'View'
       return { style: item, type: compType }
     case 'object':
       if(!Array.isArray(item)) return item.$$typeof ? { comp: item } : { dys: item, type: 'View' }
