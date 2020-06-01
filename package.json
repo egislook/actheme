@@ -1,9 +1,12 @@
 {
-  "version": "0.0.25",
+  "version": "0.0.26",
   "name": "actheme",
   "main": "/out/index.js",
   "babel": {
-    "presets": ["@babel/preset-env", "@babel/preset-react"]
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
   },
   "scripts": {
     "start": "babel --watch src/ --out-dir ./out",
