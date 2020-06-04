@@ -12,7 +12,8 @@ module.exports = {
   value: themeValue,
   device: devicePrefix,
   style: fustyle,
-  dims: key => key ? RN.Dimensions.get('window')[key] : RN.Dimensions.get('window')
+  dims: key => key ? RN.Dimensions.get('window')[key] : RN.Dimensions.get('window'),
+  state
 }
 
 let theme = defaultTheme, Comps = {}, ready, created
@@ -279,4 +280,18 @@ export function devicePrefix(value){
 
     return
   }
+}
+
+export function state (initial = {}) {
+	const store = initial
+	return [store, useState]
+
+	function useState(value, name) {
+		const state = React.useState(value)
+		if(!name) return state
+		const title = name.charAt(0).toUpperCase() + name.slice(1)
+		store['get' + title] = () => state[0]
+		store['set' + title] = state[1]
+		return state
+	}
 }

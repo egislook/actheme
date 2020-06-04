@@ -11,6 +11,7 @@ exports.Comp = Comp;
 exports.fustyle = fustyle;
 exports.themeValue = themeValue;
 exports.devicePrefix = devicePrefix;
+exports.state = state;
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -74,7 +75,8 @@ module.exports = {
   style: fustyle,
   dims: function dims(key) {
     return key ? RN.Dimensions.get('window')[key] : RN.Dimensions.get('window');
-  }
+  },
+  state: state
 };
 var theme = defaultTheme,
     Comps = {},
@@ -417,5 +419,24 @@ function devicePrefix(value) {
     if (RN.Platform.OS === 'ios') return 'i';
     if (RN.Platform.OS === 'android') return 'a';
     return;
+  }
+}
+
+function state() {
+  var initial = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var store = initial;
+  return [store, useState];
+
+  function useState(value, name) {
+    var state = React.useState(value);
+    if (!name) return state;
+    var title = name.charAt(0).toUpperCase() + name.slice(1);
+
+    store['get' + title] = function () {
+      return state[0];
+    };
+
+    store['set' + title] = state[1];
+    return state;
   }
 }
