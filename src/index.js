@@ -19,7 +19,7 @@ module.exports = {
 let theme = defaultTheme, Comps = {}, ready, created
 
 export function set(customTheme, comps = {}){
-  // if(ready) return
+  if(ready) return
   console.log('Actheme', 'set')
   customTheme = customTheme || { color: {} }
   Comps = comps
@@ -60,6 +60,7 @@ export function setScaledSizes(theme){
 }
 
 export function create(comps, compType){
+  // console.log(comps)
   if(!created){
     created = true
     console.log('Actheme create', 'ready', ready)
@@ -70,8 +71,9 @@ export function create(comps, compType){
   return Object.keys(comps).reduce((obj, key) => {
     const { type, comp, dys, animated, refered, extra, ...compProps } = getProps(comps[key], 'comp')
     // Sets Node
+    // console.log({ type, comp, dys, animated, refered, extra, compProps })
     const Node = type
-      ? animated ? RN['Animated'][type] : RN[type]
+      ? animated ? RN['Animated'][type] : Comp(type)
       : comp
 
     if(!Object.keys(compProps).length && !dys){
@@ -182,8 +184,7 @@ function getProps(item){
 }
 
 export function Comp(name, alt = 'View'){
-  console.log('comp', Comps && Comps[name])
-  return Comps && Comps[name] || RN[alt]
+  return Comps && Comps[name] || RN[name] || RN[alt]
 
   // const isComponent = typeof arguments[0] === 'object' && !Array.isArray(arguments[0])
   // const args = Array.isArray(arguments[0]) ? arguments[0] : arguments

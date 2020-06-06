@@ -85,7 +85,7 @@ var theme = defaultTheme,
 
 function set(customTheme) {
   var comps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  // if(ready) return
+  if (ready) return;
   console.log('Actheme', 'set');
   customTheme = customTheme || {
     color: {}
@@ -129,6 +129,7 @@ function setScaledSizes(theme) {
 }
 
 function create(comps, compType) {
+  // console.log(comps)
   if (!created) {
     created = true;
     console.log('Actheme create', 'ready', ready);
@@ -150,9 +151,10 @@ function create(comps, compType) {
         refered = _getProps.refered,
         extra = _getProps.extra,
         compProps = _objectWithoutProperties(_getProps, ["type", "comp", "dys", "animated", "refered", "extra"]); // Sets Node
+    // console.log({ type, comp, dys, animated, refered, extra, compProps })
 
 
-    var Node = type ? animated ? RN['Animated'][type] : RN[type] : comp;
+    var Node = type ? animated ? RN['Animated'][type] : Comp(type) : comp;
 
     if (!Object.keys(compProps).length && !dys) {
       obj[key] = type ? Node : comp;
@@ -321,8 +323,7 @@ function getProps(item) {
 
 function Comp(name) {
   var alt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'View';
-  console.log('comp', Comps && Comps[name]);
-  return Comps && Comps[name] || RN[alt]; // const isComponent = typeof arguments[0] === 'object' && !Array.isArray(arguments[0])
+  return Comps && Comps[name] || RN[name] || RN[alt]; // const isComponent = typeof arguments[0] === 'object' && !Array.isArray(arguments[0])
   // const args = Array.isArray(arguments[0]) ? arguments[0] : arguments
   //
   // const props = isComponent ? args[0] : {
