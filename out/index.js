@@ -3,7 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.dims = dims;
 exports.set = set;
+exports.unset = unset;
 exports.setAlphedColors = setAlphedColors;
 exports.setScaledSizes = setScaledSizes;
 exports.create = create;
@@ -17,14 +19,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
@@ -33,13 +27,9 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -47,13 +37,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 var React = require('react');
-
-var styleProps = require('../styleProps');
-
-var styleValues = require('../styleValues');
-
-var defaultTheme = require('../theme');
 
 var RN = function () {
   try {
@@ -63,6 +59,25 @@ var RN = function () {
   }
 }();
 
+var styleProps = require('../styleProps');
+
+var styleValues = require('../styleValues');
+
+var defaultTheme = require('../theme');
+
+var medias = {
+  sm: 400,
+  md: 768,
+  lg: 1024,
+  xl: 1280
+};
+var theme = defaultTheme,
+    Comps = {},
+    ready,
+    created,
+    screen,
+    subscriptions = [],
+    classes = {};
 module.exports = {
   create: create,
   Comp: Comp,
@@ -73,15 +88,59 @@ module.exports = {
   value: themeValue,
   device: devicePrefix,
   style: fustyle,
-  dims: function dims(key) {
-    return key ? RN.Dimensions.get('window')[key] : RN.Dimensions.get('window');
-  },
-  state: state
+  dims: dims,
+  state: state,
+  media: useMedia,
+  useMedia: useMedia,
+  mediaRules: mediaRules
 };
-var theme = defaultTheme,
-    Comps = {},
-    ready,
-    created;
+
+function useMedia() {
+  var _React$useState = React.useState(screen),
+      _React$useState2 = _slicedToArray(_React$useState, 2),
+      media = _React$useState2[0],
+      setMedia = _React$useState2[1];
+
+  var mediaKeys = Object.keys(medias);
+  React.useEffect(function () {
+    !screen && onLayout() && RN.Dimensions.addEventListener('change', onLayout);
+    var componentId = Date.now() + Math.random();
+    subscriptions.push({
+      componentId: componentId,
+      setMedia: setMedia
+    });
+    return function () {
+      subscriptions = subscriptions.filter(function (sub) {
+        return sub.componentId !== componentId;
+      });
+    };
+  }, []);
+  return mediaKeys.reduce(function (obj, key) {
+    return medias[key] < medias[screen] ? _objectSpread(_objectSpread({}, obj), {}, _defineProperty({}, key, true)) : obj;
+  }, {});
+}
+
+function dims(key) {
+  var dimensions = RN.Dimensions.get('window');
+  if (!key) return dimensions;
+  if (['height', 'width', 'scale'].includes(key)) return dimensions[key];
+  var index = Object.values(medias).findIndex(function (item) {
+    return item > dimensions.width;
+  });
+  return Object.keys(medias)[!!~index ? index : Object.keys(medias).length - 1];
+}
+
+function onLayout() {
+  var media = dims('media');
+  if (media === screen) return;
+  screen = media;
+  subscriptions && subscriptions.forEach(function (_ref) {
+    var setMedia = _ref.setMedia;
+    return setMedia(media);
+  });
+  console.log('Actheme', screen);
+  return media;
+}
 
 function set(customTheme) {
   var comps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -103,6 +162,10 @@ function set(customTheme) {
   theme.device = devicePrefix;
   ready = true;
   return theme;
+}
+
+function unset() {
+  RN.Dimensions.removeEventListener('change', onLayout);
 }
 
 function setAlphedColors(theme) {
@@ -159,53 +222,84 @@ function create(comps, compType) {
     if (!Object.keys(compProps).length && !dys) {
       obj[key] = type ? Node : comp;
       return obj;
-    } // Stores Element to object with styling
+    }
 
+    var mediaKeys = dys && Object.keys(dys).filter(function (key) {
+      return Object.keys(medias).includes(key);
+    }) || []; // Stores Element to the object with styling
 
-    obj[key] = !refered ? function (props) {
-      var _getModifiedProps = getModifiedProps(props),
-          _getModifiedProps2 = _slicedToArray(_getModifiedProps, 2),
-          style = _getModifiedProps2[0],
-          exProps = _getModifiedProps2[1];
-
-      return /*#__PURE__*/React.createElement(Node, _extends({}, props, exProps, {
-        style: style
-      }));
-    } : React.forwardRef(function (props, ref) {
-      var _getModifiedProps3 = getModifiedProps(props),
-          _getModifiedProps4 = _slicedToArray(_getModifiedProps3, 2),
-          style = _getModifiedProps4[0],
-          exProps = _getModifiedProps4[1];
-
+    obj[key] = refered ? React.forwardRef(function (props, ref) {
       return /*#__PURE__*/React.createElement(Node, _extends({
         ref: ref
-      }, props, exProps, {
-        style: style
+      }, props, getStyledProps(props, styles, extra, key, dys, dynamics, extras)));
+    }) : !mediaKeys.length ? function (props) {
+      return /*#__PURE__*/React.createElement(Node, _extends({}, props, getStyledProps(props, styles, extra, key, dys, dynamics, extras)));
+    } : function (props) {
+      var mediaList = useMedia();
+      var rest = getStyledProps(props, styles, _objectSpread(_objectSpread({}, extra), mediaList), key, dys, dynamics, extras);
+      var classList = getMediaClasses(mediaKeys, dys);
+      return /*#__PURE__*/React.createElement(Node, _extends({}, props, rest, {
+        classList: classList
       }));
-    });
-    return obj; // Returns modified styles and props
-
-    function getModifiedProps(props) {
-      var style = styles[key];
-      var exProps = extra && _objectSpread({}, extra) || {}; // Sets dynamic styling and properties
-
-      if (dys) {
-        var activeProps = Object.keys(_objectSpread(_objectSpread({}, exProps), props)).filter(function (prop) {
-          return Boolean(props[prop]) || Boolean(exProps[prop]);
-        });
-        style = RN.StyleSheet.flatten([style, RN.StyleSheet.flatten(activeProps.slice().map(function (prop) {
-          return dynamics[key][prop];
-        }))]);
-        extras[key] && activeProps.reduce(function (obj, prop) {
-          return Object.assign(obj, extras[key][prop]);
-        }, exProps);
-      } // Sets fustyle and style
-
-
-      if (props.fustyle || props.style || exProps.style) style = [style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style];
-      return [style, exProps];
-    }
+    };
+    return obj;
   }, {});
+} // Returns media classlist and sets rule to classes global object
+
+
+function getMediaClasses(mediaKeys, dys) {
+  return devicePrefix('web') && mediaKeys.map(function (key) {
+    if (Array.isArray(dys[key])) return;
+    var rules = fustyle(dys[key], 'px');
+    var name = "".concat(key, "-") + dys[key].replace(/\s/g, '').replace(/\:/g, '');
+    if (!classes[key]) classes[key] = {};
+    if (!classes[key][name]) classes[key][name] = Object.keys(rules).map(function (prop) {
+      return "".concat(getCssProp(prop), ": ").concat(rules[prop], " !important;");
+    }).join(' ');
+    return name;
+  }).filter(function (k) {
+    return k;
+  }) || '';
+}
+
+function getCssProp(prop) {
+  return prop.split('').reduce(function (str, letter) {
+    return str + (/[A-Z]/.test(letter) ? '-' + letter.toLowerCase() : letter);
+  }, '');
+}
+
+function mediaRules() {
+  return Object.keys(classes).map(function (media) {
+    return ["@media only screen and ( min-width: ".concat(medias[media], "px) {\n"), Object.keys(classes[media]).reduce(function (str, name) {
+      return str + "\n.".concat(name, " { ").concat(classes[media][name], " }");
+    }, ''), "\n}"].join('');
+  }).join('\n');
+} // Returns modified styles and props
+
+
+function getStyledProps(props, styles, extra, key, dys, dynamics, extras) {
+  var style = styles[key];
+
+  var exProps = _objectSpread({}, extra || {}); // Sets dynamic styling and properties
+
+
+  if (dys) {
+    var activeProps = Object.keys(_objectSpread(_objectSpread({}, exProps), props)).filter(function (prop) {
+      return !['children'].includes(prop) && (Boolean(props[prop]) || Boolean(exProps[prop]));
+    });
+    style = RN.StyleSheet.flatten([style, RN.StyleSheet.flatten(activeProps.slice().map(function (prop) {
+      return dynamics[key][prop];
+    }))]);
+    extras[key] && activeProps.reduce(function (obj, prop) {
+      return Object.assign(obj, extras[key][prop]);
+    }, exProps);
+  } // Sets fustyle and style
+
+
+  if (props.fustyle || props.style || exProps.style) style = RN.StyleSheet.flatten([style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style]);
+  return _objectSpread(_objectSpread({}, exProps), {}, {
+    style: style
+  });
 } // Creates Stylesheets for static and dynamic styles
 
 
@@ -342,8 +436,7 @@ function Comp(name) {
   //   : props => <Node style={style} {...props} />
 }
 
-function fustyle(obj) {
-  var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+function fustyle(obj, units) {
   var classes;
 
   switch (_typeof(obj)) {
@@ -352,10 +445,10 @@ function fustyle(obj) {
       break;
 
     case 'object':
-      classes = Object.entries(obj).reduce(function (arr, _ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            key = _ref2[0],
-            show = _ref2[1];
+      classes = Object.entries(obj).reduce(function (arr, _ref2) {
+        var _ref3 = _slicedToArray(_ref2, 2),
+            key = _ref3[0],
+            show = _ref3[1];
 
         return show && key.length ? arr.concat(key.split(' ')) : arr;
       }, []);
@@ -376,20 +469,21 @@ function fustyle(obj) {
 
     if (!!props.includes('@')) {
       var prefixProps = props.split('@');
-      prefix = prefixProps.shift();
-      if (devicePrefix() !== prefix) return obj;
+      prefix = prefixProps.shift(); // console.log({ prefix, prefixProps })
+
+      if (!devicePrefix(prefix)) return obj;
       props = prefixProps.shift();
     }
 
     props.split(',').map(function (prop) {
       prop = styleProps[prop] || prop;
       value = styleValues[value] || value;
-      obj[prop] = isNaN(value) ? themeValue(value, prop) : parseFloat(value); // : theme.moderateScale ? moderateScale(parseFloat(value), theme.moderateScale)
-
+      obj[prop] = isNaN(value) ? themeValue(value, prop) : parseFloat(value);
+      if (units && /^[0-9]+$/.test(obj[prop])) obj[prop] = obj[prop] + units;
       return prop;
     });
     return obj;
-  }, style);
+  }, {});
   return styles;
 } // finds theme value
 
@@ -410,15 +504,24 @@ function themeValue(value, prop) {
 
 
 function devicePrefix(value) {
-  var dimen = RN.Dimensions.get('window');
-  return value ? value.charAt(0) === getPrefix() : getPrefix();
+  var _RN$Dimensions$get = RN.Dimensions.get('window'),
+      height = _RN$Dimensions$get.height,
+      width = _RN$Dimensions$get.width;
 
-  function getPrefix() {
-    if (RN.Platform.OS === 'ios' && !RN.Platform.isPad && !RN.Platform.isTVOS && (dimen.height === 812 || dimen.width === 812 || dimen.height === 896 || dimen.width === 896)) return 'x'; // if(DeviceInfo.hasNotch()) return 'n'
+  var _RN$Platform = RN.Platform,
+      OS = _RN$Platform.OS,
+      isPad = _RN$Platform.isPad,
+      isTVOS = _RN$Platform.isTVOS;
+  var device = getDevicePrefix();
+  var first = value && value.charAt(0);
+  return first ? first === device || first === 'i' && device === 'x' : device;
 
-    if (RN.Platform.OS === 'web') return 'w';
-    if (RN.Platform.OS === 'ios') return 'i';
-    if (RN.Platform.OS === 'android') return 'a';
+  function getDevicePrefix() {
+    if (OS === 'ios' && !isPad && !isTVOS && (height === 812 || width === 812 || height === 896 || width === 896)) return 'x'; // if(DeviceInfo.hasNotch()) return 'n'
+
+    if (OS === 'web') return 'w';
+    if (OS === 'ios') return 'i';
+    if (OS === 'android') return 'a';
     return;
   }
 }
