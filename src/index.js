@@ -3,7 +3,6 @@ const RN = (() => { try { return require('react-native') } catch(error) { return
 const styleProps = require('../styleProps')
 const styleValues = require('../styleValues')
 const defaultTheme = require('../theme')
-const medias = { sm: 400, md: 768, lg: 1024, xl: 1280 }
 let theme = defaultTheme, Comps = {}, ready, created, screen, subscriptions = [], classes = {}
 
 module.exports = {
@@ -18,37 +17,6 @@ module.exports = {
   media: useMedia,
   useMedia,
   mediaRules
-}
-
-function useMedia(){
-  const [media, setMedia] = React.useState(screen)
-  const mediaKeys = Object.keys(medias)
-
-  React.useEffect(() => {
-    !screen && onLayout() && RN.Dimensions.addEventListener('change', onLayout)
-    const componentId = Date.now() + Math.random()
-    subscriptions.push({ componentId, setMedia })
-    return () => { subscriptions = subscriptions.filter(sub => sub.componentId !== componentId) }
-  }, [])
-
-  return mediaKeys.reduce((obj, key) => (medias[key] < medias[screen] ? {...obj, [key]: true } : obj), {})
-}
-
-export function dims(key){
-  const dimensions = RN.Dimensions.get('window')
-  if(!key) return dimensions
-  if(['height', 'width', 'scale'].includes(key)) return dimensions[key]
-  const index = Object.values(medias).findIndex(item => item > dimensions.width)
-  return Object.keys(medias)[!!~index ? index : Object.keys(medias).length - 1]
-}
-
-function onLayout(){
-  const media = dims('media')
-  if(media === screen) return
-  screen = media
-  subscriptions && subscriptions.forEach(({ setMedia }) => setMedia(media))
-  console.log('Actheme', screen)
-  return media
 }
 
 export function set(customTheme, comps = {}){
@@ -66,8 +34,48 @@ export function set(customTheme, comps = {}){
   return theme
 }
 
-export function unset(){
-  RN.Dimensions.removeEventListener('change', onLayout)
+// Medias
+function useMedia(){
+  const [media, setMedia] = React.useState(screen)
+  const mediaKeys = Object.keys(theme.medias)
+
+  React.useEffect(() => {
+    const componentId = Date.now() + Math.random()
+    subscriptions.push({ componentId, setMedia })
+    !screen && !!subscriptions.length && onLayout() && mediaListiner(true)
+    return () => { subscriptions = subscriptions.filter(sub => sub.componentId !== componentId) }
+  }, [])
+
+  return mediaKeys.reduce((obj, key, index) => (theme.medias[key] <= theme.medias[screen] ? {...obj, [key]: true } : obj), {})
+}
+
+export function dims(key){
+  const dimensions = RN.Dimensions.get('window')
+  if(!key) return dimensions
+  if(['height', 'width', 'scale'].includes(key)) return dimensions[key]
+  if(['oriantation', 'portrait', 'landscape'].includes(key)){
+    const oriantation = dimensions.width > dimensions.height ? 'landscape' : 'portrait'
+    if(['portrait', 'landscape'].includes(key)) return key === oriantation
+    return oriantation
+  }
+  const index = Object.values(theme.medias).findIndex((item, i) => dimensions.width < item) - 1
+  return !~index ? 'basic' : index < -1 ? Object.keys(theme.medias).pop() : Object.keys(theme.medias)[index]
+}
+
+function onLayout(){
+  const media = dims('media')
+  if(media === screen) return
+  screen = media
+  subscriptions.length && subscriptions.forEach(({ setMedia }) => setMedia(media))
+  console.log('Actheme media', media, dims('oriantation'))
+  return media
+}
+
+export function mediaListiner(listen){
+  return !listen ? RN.Dimensions.removeEventListener('change', onLayout) : (
+    RN.Dimensions.removeEventListener('change', onLayout),
+    RN.Dimensions.addEventListener('change', onLayout)
+  )
 }
 
 export function setAlphedColors(theme){
@@ -118,7 +126,7 @@ export function create(comps, compType){
       return obj
     }
 
-    const mediaKeys = dys && Object.keys(dys).filter(key => Object.keys(medias).includes(key)) || []
+    const mediaKeys = dys && Object.keys(dys).filter(key => Object.keys(theme.medias).includes(key)) || []
 
     // Stores Element to the object with styling
     obj[key] = refered
@@ -155,7 +163,7 @@ function getCssProp(prop){
 
 function mediaRules(){
   return Object.keys(classes).map(media => [
-    `@media only screen and ( min-width: ${medias[media]}px) {\n`,
+    `@media only screen and ( min-width: ${theme.medias[media]}px) {\n`,
       Object.keys(classes[media]).reduce((str, name) => str + `\n.${name} { ${classes[media][name]} }`, ''),
     `\n}`
   ].join('')).join('\n')

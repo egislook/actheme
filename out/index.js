@@ -3,9 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.dims = dims;
 exports.set = set;
-exports.unset = unset;
+exports.dims = dims;
+exports.mediaListiner = mediaListiner;
 exports.setAlphedColors = setAlphedColors;
 exports.setScaledSizes = setScaledSizes;
 exports.create = create;
@@ -31,12 +31,6 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.it
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -48,6 +42,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var React = require('react');
 
@@ -65,12 +65,6 @@ var styleValues = require('../styleValues');
 
 var defaultTheme = require('../theme');
 
-var medias = {
-  sm: 400,
-  md: 768,
-  lg: 1024,
-  xl: 1280
-};
 var theme = defaultTheme,
     Comps = {},
     ready,
@@ -95,53 +89,6 @@ module.exports = {
   mediaRules: mediaRules
 };
 
-function useMedia() {
-  var _React$useState = React.useState(screen),
-      _React$useState2 = _slicedToArray(_React$useState, 2),
-      media = _React$useState2[0],
-      setMedia = _React$useState2[1];
-
-  var mediaKeys = Object.keys(medias);
-  React.useEffect(function () {
-    !screen && onLayout() && RN.Dimensions.addEventListener('change', onLayout);
-    var componentId = Date.now() + Math.random();
-    subscriptions.push({
-      componentId: componentId,
-      setMedia: setMedia
-    });
-    return function () {
-      subscriptions = subscriptions.filter(function (sub) {
-        return sub.componentId !== componentId;
-      });
-    };
-  }, []);
-  return mediaKeys.reduce(function (obj, key) {
-    return medias[key] < medias[screen] ? _objectSpread(_objectSpread({}, obj), {}, _defineProperty({}, key, true)) : obj;
-  }, {});
-}
-
-function dims(key) {
-  var dimensions = RN.Dimensions.get('window');
-  if (!key) return dimensions;
-  if (['height', 'width', 'scale'].includes(key)) return dimensions[key];
-  var index = Object.values(medias).findIndex(function (item) {
-    return item > dimensions.width;
-  });
-  return Object.keys(medias)[!!~index ? index : Object.keys(medias).length - 1];
-}
-
-function onLayout() {
-  var media = dims('media');
-  if (media === screen) return;
-  screen = media;
-  subscriptions && subscriptions.forEach(function (_ref) {
-    var setMedia = _ref.setMedia;
-    return setMedia(media);
-  });
-  console.log('Actheme', screen);
-  return media;
-}
-
 function set(customTheme) {
   var comps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   if (ready) return;
@@ -162,10 +109,65 @@ function set(customTheme) {
   theme.device = devicePrefix;
   ready = true;
   return theme;
+} // Medias
+
+
+function useMedia() {
+  var _React$useState = React.useState(screen),
+      _React$useState2 = _slicedToArray(_React$useState, 2),
+      media = _React$useState2[0],
+      setMedia = _React$useState2[1];
+
+  var mediaKeys = Object.keys(theme.medias);
+  React.useEffect(function () {
+    var componentId = Date.now() + Math.random();
+    subscriptions.push({
+      componentId: componentId,
+      setMedia: setMedia
+    });
+    !screen && !!subscriptions.length && onLayout() && mediaListiner(true);
+    return function () {
+      subscriptions = subscriptions.filter(function (sub) {
+        return sub.componentId !== componentId;
+      });
+    };
+  }, []);
+  return mediaKeys.reduce(function (obj, key, index) {
+    return theme.medias[key] <= theme.medias[screen] ? _objectSpread(_objectSpread({}, obj), {}, _defineProperty({}, key, true)) : obj;
+  }, {});
 }
 
-function unset() {
-  RN.Dimensions.removeEventListener('change', onLayout);
+function dims(key) {
+  var dimensions = RN.Dimensions.get('window');
+  if (!key) return dimensions;
+  if (['height', 'width', 'scale'].includes(key)) return dimensions[key];
+
+  if (['oriantation', 'portrait', 'landscape'].includes(key)) {
+    var oriantation = dimensions.width > dimensions.height ? 'landscape' : 'portrait';
+    if (['portrait', 'landscape'].includes(key)) return key === oriantation;
+    return oriantation;
+  }
+
+  var index = Object.values(theme.medias).findIndex(function (item, i) {
+    return dimensions.width < item;
+  }) - 1;
+  return !~index ? 'basic' : index < -1 ? Object.keys(theme.medias).pop() : Object.keys(theme.medias)[index];
+}
+
+function onLayout() {
+  var media = dims('media');
+  if (media === screen) return;
+  screen = media;
+  subscriptions.length && subscriptions.forEach(function (_ref) {
+    var setMedia = _ref.setMedia;
+    return setMedia(media);
+  });
+  console.log('Actheme media', media, dims('oriantation'));
+  return media;
+}
+
+function mediaListiner(listen) {
+  return !listen ? RN.Dimensions.removeEventListener('change', onLayout) : (RN.Dimensions.removeEventListener('change', onLayout), RN.Dimensions.addEventListener('change', onLayout));
 }
 
 function setAlphedColors(theme) {
@@ -225,7 +227,7 @@ function create(comps, compType) {
     }
 
     var mediaKeys = dys && Object.keys(dys).filter(function (key) {
-      return Object.keys(medias).includes(key);
+      return Object.keys(theme.medias).includes(key);
     }) || []; // Stores Element to the object with styling
 
     obj[key] = refered ? React.forwardRef(function (props, ref) {
@@ -270,7 +272,7 @@ function getCssProp(prop) {
 
 function mediaRules() {
   return Object.keys(classes).map(function (media) {
-    return ["@media only screen and ( min-width: ".concat(medias[media], "px) {\n"), Object.keys(classes[media]).reduce(function (str, name) {
+    return ["@media only screen and ( min-width: ".concat(theme.medias[media], "px) {\n"), Object.keys(classes[media]).reduce(function (str, name) {
       return str + "\n.".concat(name, " { ").concat(classes[media][name], " }");
     }, ''), "\n}"].join('');
   }).join('\n');
