@@ -55,7 +55,11 @@ var RN = function () {
   try {
     return require('react-native');
   } catch (error) {
-    return eval('require("react-native-web")');
+    try {
+      return eval('require("react-native-web")');
+    } catch (err){
+      return eval('require("rnwc")');
+    }
   }
 }();
 

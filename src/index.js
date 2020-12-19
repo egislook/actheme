@@ -1,5 +1,5 @@
 const React = require('react')
-const RN = (() => { try { return require('react-native') } catch(error) { return eval('require("react-native-web")') } })()
+const RN = (() => { try { return require('react-native') } catch(error) { try { return eval('require("react-native-web")') } catch (err){ return eval('require("rnwc")') } } })()
 const styleProps = require('../styleProps')
 const styleValues = require('../styleValues')
 const defaultTheme = require('../theme')
