@@ -1,7 +1,7 @@
 {
   "version": "0.0.34",
   "name": "actheme",
-  "main": "/out/index.js",
+  "main": "./out/index.js",
   "babel": {
     "presets": [
       "@babel/preset-env",
