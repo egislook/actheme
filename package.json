@@ -13,7 +13,7 @@
     "format": "prettier --tab-width 2 --jsx-bracket-same-line true --single-quote --print-width 100 true --semi false --write \"src/**/*.js\""
   },
   "peerDependencies": {
-    "react": "16.*"
+    "react": "17.*"
   },
   "repository": {
     "type": "git",
