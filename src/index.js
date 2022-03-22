@@ -105,13 +105,13 @@ export function setScaledSizes(theme){
 }
 
 export function create(comps, compType){
-  // console.log(comps)
   if(!created){
     created = true
     console.log('Actheme create', 'ready', ready)
   }
   // Creates StyleSheet
   const { styles, dynamics, extras } = getStyles(comps)
+  // console.log({ styles, dynamics, extras })
   // Creates Elements
   return Object.keys(comps).reduce((obj, key) => {
     const { type, comp, dys, animated, refered, extra, ...compProps } = getProps(comps[key], 'comp')
@@ -136,25 +136,24 @@ export function create(comps, compType){
         : props => {
           const mediaList = useMedia()
           const rest = getStyledProps(props, styles, { ...extra, ...mediaList }, key, dys, dynamics, extras)
-          const classList = getMediaClasses(mediaKeys, dys)
-          return <Node {...props} {...rest} classList={classList} />
+          const mediaData = getMediaData(mediaKeys, dys)
+          return <Node {...props} {...rest} dataSet={{ ...mediaData, ...(props.dataSet || {}) }} />
         }
 
     return obj
   }, {})
 }
 
-// Returns media classlist and sets rule to classes global object
-function getMediaClasses(mediaKeys, dys){
-  return devicePrefix('web') && mediaKeys.map(key => {
+// Returns media mediaData and sets rule to classes global object
+function getMediaData(mediaKeys, dys){
+  return devicePrefix('web') && mediaKeys.reduce((obj, key) => {
     if(Array.isArray(dys[key])) return
     const rules = fustyle(dys[key], 'px')
-    const name = `${key}-` + dys[key].replace(/\s/g, '').replace(/\:/g, '')
+    const name = dys[key].replace(/\s/g, '').replace(/\:/g, '')
     if(!classes[key]) classes[key] = {}
-    if(!classes[key][name])
-      classes[key][name] = Object.keys(rules).map(prop => `${getCssProp(prop)}: ${rules[prop]} !important;`).join(' ')
-    return name
-  }).filter(k => k) || ''
+    if(!classes[key][name]) classes[key][name] = Object.keys(rules).map(prop => `${getCssProp(prop)}: ${rules[prop]};`).join(' ')
+    return { ...obj, ['media-' + key]: name}
+  }, {})
 }
 
 function getCssProp(prop){
@@ -162,27 +161,32 @@ function getCssProp(prop){
 }
 
 function mediaRules(){
-  return Object.keys(classes).map(media => [
-    `@media only screen and ( min-width: ${theme.medias[media]}px) {\n`,
-      Object.keys(classes[media]).reduce((str, name) => str + `\n.${name} { ${classes[media][name]} }`, ''),
-    `\n}`
-  ].join('')).join('\n')
+  const rules = Object.keys(classes).map(media => {
+    const rule = media.length === 3 && media.charAt(2) === 'x' ? `max-width: ${theme.medias[media]}px` : `min-width: ${theme.medias[media]}px`
+    return [
+      `@media only screen and (${rule}) {\n`,
+        Object.keys(classes[media]).reduce((str, name) => str + `\n[data-media-${media}*="${name.replace('.', '\\.')}"] { ${classes[media][name]} }`, ''),
+      `\n}`
+    ].join('')
+  }).join('\n')
+  return rules
 }
 
 // Returns modified styles and props
 function getStyledProps(props, styles, extra, key, dys, dynamics, extras){
   let style = styles[key]
-
   const exProps = { ...(extra || {}) }
+
   // Sets dynamic styling and properties
   if(dys){
-    const activeProps = Object.keys({ ...exProps, ...props }).filter(prop => !['children'].includes(prop) && ((Boolean(props[prop]) || Boolean(exProps[prop]))) )
-    style = RN.StyleSheet.flatten([style, RN.StyleSheet.flatten(activeProps.slice().map(prop => dynamics[key][prop]))])
+    const activeProps = Object.keys({ ...exProps, ...props }).filter(prop => !['children'].includes(prop) && !prop.includes('style') && ((Boolean(props[prop]) || Boolean(exProps[prop]))) )
+    style = [style, activeProps.slice().map(prop => dynamics[key][prop])] //RN.StyleSheet.flatten()
     extras[key] && activeProps.reduce((obj, prop) => Object.assign(obj, extras[key][prop]), exProps)
   }
+
   // Sets fustyle and style
   if(props.fustyle || props.style || exProps.style)
-    style = RN.StyleSheet.flatten([style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style])
+    style = [style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style] //RN.StyleSheet.flatten()
 
   return { ...exProps, style }
 }
@@ -302,8 +306,6 @@ export function fustyle(obj, units){
     if(!!props.includes('@')){
       const prefixProps = props.split('@')
       prefix = prefixProps.shift()
-      // console.log({ prefix, prefixProps })
-
       if(!devicePrefix(prefix)) return obj
       props = prefixProps.shift()
     }
@@ -311,8 +313,9 @@ export function fustyle(obj, units){
     props.split(',').map(prop => {
       prop = styleProps[prop] || prop
       value = styleValues[value] || value
+      if(value.includes('_')) value = value.replace(/\_/g, ' ')
 
-      obj[prop] = isNaN(value) ? themeValue(value, prop) : parseFloat(value)
+      obj[prop] = isNaN(value) && prop !== 'fb' ? themeValue(value, prop) : parseFloat(value)
       if(units && (/^[0-9]+$/).test(obj[prop])) obj[prop] = obj[prop] + units
       return prop
     })

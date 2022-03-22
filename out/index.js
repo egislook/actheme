@@ -3,19 +3,20 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.set = set;
+exports.Comp = Comp;
+exports.create = create;
+exports.devicePrefix = devicePrefix;
 exports.dims = dims;
+exports.fustyle = fustyle;
 exports.mediaListiner = mediaListiner;
+exports.set = set;
 exports.setAlphedColors = setAlphedColors;
 exports.setScaledSizes = setScaledSizes;
-exports.create = create;
-exports.Comp = Comp;
-exports.fustyle = fustyle;
-exports.themeValue = themeValue;
-exports.devicePrefix = devicePrefix;
 exports.state = state;
+exports.themeValue = themeValue;
+var _excluded = ["type", "comp", "dys", "animated", "refered", "extra"];
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -27,7 +28,7 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
@@ -39,13 +40,13 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -57,7 +58,7 @@ var RN = function () {
   } catch (error) {
     try {
       return eval('require("react-native-web")');
-    } catch (err){
+    } catch (err) {
       return eval('require("rnwc")');
     }
   }
@@ -198,7 +199,6 @@ function setScaledSizes(theme) {
 }
 
 function create(comps, compType) {
-  // console.log(comps)
   if (!created) {
     created = true;
     console.log('Actheme create', 'ready', ready);
@@ -208,7 +208,8 @@ function create(comps, compType) {
   var _getStyles = getStyles(comps),
       styles = _getStyles.styles,
       dynamics = _getStyles.dynamics,
-      extras = _getStyles.extras; // Creates Elements
+      extras = _getStyles.extras; // console.log({ styles, dynamics, extras })
+  // Creates Elements
 
 
   return Object.keys(comps).reduce(function (obj, key) {
@@ -219,7 +220,7 @@ function create(comps, compType) {
         animated = _getProps.animated,
         refered = _getProps.refered,
         extra = _getProps.extra,
-        compProps = _objectWithoutProperties(_getProps, ["type", "comp", "dys", "animated", "refered", "extra"]); // Sets Node
+        compProps = _objectWithoutProperties(_getProps, _excluded); // Sets Node
     // console.log({ type, comp, dys, animated, refered, extra, compProps })
 
 
@@ -243,29 +244,27 @@ function create(comps, compType) {
     } : function (props) {
       var mediaList = useMedia();
       var rest = getStyledProps(props, styles, _objectSpread(_objectSpread({}, extra), mediaList), key, dys, dynamics, extras);
-      var classList = getMediaClasses(mediaKeys, dys);
+      var mediaData = getMediaData(mediaKeys, dys);
       return /*#__PURE__*/React.createElement(Node, _extends({}, props, rest, {
-        classList: classList
+        dataSet: _objectSpread(_objectSpread({}, mediaData), props.dataSet || {})
       }));
     };
     return obj;
   }, {});
-} // Returns media classlist and sets rule to classes global object
+} // Returns media mediaData and sets rule to classes global object
 
 
-function getMediaClasses(mediaKeys, dys) {
-  return devicePrefix('web') && mediaKeys.map(function (key) {
+function getMediaData(mediaKeys, dys) {
+  return devicePrefix('web') && mediaKeys.reduce(function (obj, key) {
     if (Array.isArray(dys[key])) return;
     var rules = fustyle(dys[key], 'px');
-    var name = "".concat(key, "-") + dys[key].replace(/\s/g, '').replace(/\:/g, '');
+    var name = dys[key].replace(/\s/g, '').replace(/\:/g, '');
     if (!classes[key]) classes[key] = {};
     if (!classes[key][name]) classes[key][name] = Object.keys(rules).map(function (prop) {
-      return "".concat(getCssProp(prop), ": ").concat(rules[prop], " !important;");
+      return "".concat(getCssProp(prop), ": ").concat(rules[prop], ";");
     }).join(' ');
-    return name;
-  }).filter(function (k) {
-    return k;
-  }) || '';
+    return _objectSpread(_objectSpread({}, obj), {}, _defineProperty({}, 'media-' + key, name));
+  }, {});
 }
 
 function getCssProp(prop) {
@@ -275,11 +274,13 @@ function getCssProp(prop) {
 }
 
 function mediaRules() {
-  return Object.keys(classes).map(function (media) {
-    return ["@media only screen and ( min-width: ".concat(theme.medias[media], "px) {\n"), Object.keys(classes[media]).reduce(function (str, name) {
-      return str + "\n.".concat(name, " { ").concat(classes[media][name], " }");
+  var rules = Object.keys(classes).map(function (media) {
+    var rule = media.length === 3 && media.charAt(2) === 'x' ? "max-width: ".concat(theme.medias[media], "px") : "min-width: ".concat(theme.medias[media], "px");
+    return ["@media only screen and (".concat(rule, ") {\n"), Object.keys(classes[media]).reduce(function (str, name) {
+      return str + "\n[data-media-".concat(media, "*=\"").concat(name.replace('.', '\\.'), "\"] { ").concat(classes[media][name], " }");
     }, ''), "\n}"].join('');
   }).join('\n');
+  return rules;
 } // Returns modified styles and props
 
 
@@ -291,18 +292,20 @@ function getStyledProps(props, styles, extra, key, dys, dynamics, extras) {
 
   if (dys) {
     var activeProps = Object.keys(_objectSpread(_objectSpread({}, exProps), props)).filter(function (prop) {
-      return !['children'].includes(prop) && (Boolean(props[prop]) || Boolean(exProps[prop]));
+      return !['children'].includes(prop) && !prop.includes('style') && (Boolean(props[prop]) || Boolean(exProps[prop]));
     });
-    style = RN.StyleSheet.flatten([style, RN.StyleSheet.flatten(activeProps.slice().map(function (prop) {
+    style = [style, activeProps.slice().map(function (prop) {
       return dynamics[key][prop];
-    }))]);
+    })]; //RN.StyleSheet.flatten()
+
     extras[key] && activeProps.reduce(function (obj, prop) {
       return Object.assign(obj, extras[key][prop]);
     }, exProps);
   } // Sets fustyle and style
 
 
-  if (props.fustyle || props.style || exProps.style) style = RN.StyleSheet.flatten([style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style]);
+  if (props.fustyle || props.style || exProps.style) style = [style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style]; //RN.StyleSheet.flatten()
+
   return _objectSpread(_objectSpread({}, exProps), {}, {
     style: style
   });
@@ -475,8 +478,7 @@ function fustyle(obj, units) {
 
     if (!!props.includes('@')) {
       var prefixProps = props.split('@');
-      prefix = prefixProps.shift(); // console.log({ prefix, prefixProps })
-
+      prefix = prefixProps.shift();
       if (!devicePrefix(prefix)) return obj;
       props = prefixProps.shift();
     }
@@ -484,7 +486,8 @@ function fustyle(obj, units) {
     props.split(',').map(function (prop) {
       prop = styleProps[prop] || prop;
       value = styleValues[value] || value;
-      obj[prop] = isNaN(value) ? themeValue(value, prop) : parseFloat(value);
+      if (value.includes('_')) value = value.replace(/\_/g, ' ');
+      obj[prop] = isNaN(value) && prop !== 'fb' ? themeValue(value, prop) : parseFloat(value);
       if (units && /^[0-9]+$/.test(obj[prop])) obj[prop] = obj[prop] + units;
       return prop;
     });

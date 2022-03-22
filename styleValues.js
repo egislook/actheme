@@ -20,6 +20,7 @@ module.exports = {
   cv: 'cover',
 
   norm: 'normal',
-  wp: 'wrap'
+  wp: 'wrap',
+  gd: 'grid',
 
 }

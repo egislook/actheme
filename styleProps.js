@@ -1,21 +1,22 @@
 module.exports = {
   d: 'display',
-  
+  dp: 'display',
+
   w: 'width',
   h: 'height',
-  
+
   s: 'start',
   e: 'end',
   t: 'top',
   l: 'left',
   r: 'right',
   b: 'bottom',
-  
+
   nw: 'minWidth',
   xw: 'maxWidth',
   nh: 'minHeight',
   xh: 'maxHeight',
-  
+
   m: 'margin',
   mv: 'marginVertical',
   mh: 'marginHorizontal',
@@ -25,7 +26,7 @@ module.exports = {
   mr: 'marginRight',
   ms: 'marginStart',
   me: 'marginEnd',
-  
+
   p: 'padding',
   pv: 'paddingVertical',
   ph: 'paddingHorizontal',
@@ -49,12 +50,12 @@ module.exports = {
   fg: 'flexGrow',
   fsk: 'flexShrink',
   fb: 'flexBasis',
-  
+
   ar: 'aspectRatio',
   z: 'zIndex',
-  
+
   dir: 'direction',
-  
+
   shc: 'shadowColor',
   shof: 'shadowOffset',
   shop: 'shadowOpacity',
@@ -70,7 +71,7 @@ module.exports = {
   try: 'translateY',
 
   bfv: 'backfaceVisibility',
-  
+
   bg: 'backgroundColor',
 
   bw: 'borderWidth',
@@ -122,9 +123,19 @@ module.exports = {
   tdc: 'textDecorationColor',
   wd: 'writingDirection',
   tt: 'textTransform',
-  
+
   td: 'textDecoration',
   tdl: 'textDecorationLine',
 
   rm: 'resizeMode',
+
+  //grid
+  gtc: 'gridTemplateColumns',
+  grow: 'gridRow',
+  gcol: 'gridColumn',
+  gaflw: 'gridAutoFlow',
+  garows: 'gridAutoRows',
+
+  //transition
+  ts: 'transition'
 }
