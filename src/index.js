@@ -81,7 +81,7 @@ export function mediaListiner(listen){
 export function setAlphedColors(theme){
   return Object.keys(theme.color).reduce((obj, name) => {
     const color = theme.color[name]
-    obj[name] = color
+    obj[name] = color || ''
     if (color.includes('rgba') && color.includes('1)'))
       Object.keys(theme.alphas).forEach(key => {
         obj[name + key] = color.replace('1)', theme.alphas[key] + ')')
@@ -126,7 +126,7 @@ export function create(comps, compType){
       return obj
     }
 
-    const mediaKeys = dys && Object.keys(dys).filter(key => Object.keys(theme.medias).includes(key)) || []
+    const mediaKeys = dys && Object.keys(dys).filter(key => (Object.keys(theme.medias).reduce((arr, media) => arr.concat([media, media + 'x']), [])).includes(key)) || []
 
     // Stores Element to the object with styling
     obj[key] = refered
@@ -149,7 +149,7 @@ function getMediaData(mediaKeys, dys){
   return devicePrefix('web') && mediaKeys.reduce((obj, key) => {
     if(Array.isArray(dys[key])) return
     const rules = fustyle(dys[key], 'px')
-    const name = dys[key].replace(/\s/g, '').replace(/\:/g, '')
+    const name = dys[key].replace(/\W/g, '')
     if(!classes[key]) classes[key] = {}
     if(!classes[key][name]) classes[key][name] = Object.keys(rules).map(prop => `${getCssProp(prop)}: ${rules[prop]};`).join(' ')
     return { ...obj, ['media-' + key]: name}
@@ -161,15 +161,14 @@ function getCssProp(prop){
 }
 
 function mediaRules(){
-  const rules = Object.keys(classes).map(media => {
-    const rule = media.length === 3 && media.charAt(2) === 'x' ? `max-width: ${theme.medias[media]}px` : `min-width: ${theme.medias[media]}px`
+  return Object.keys(classes).map(media => {
+    const rule = media.charAt(2) === 'x' ? `max-width: ${theme.medias[media.slice(0, -1)] - 1}px` : `min-width: ${theme.medias[media]}px`
     return [
       `@media only screen and (${rule}) {\n`,
         Object.keys(classes[media]).reduce((str, name) => str + `\n[data-media-${media}*="${name.replace('.', '\\.')}"] { ${classes[media][name]} }`, ''),
       `\n}`
     ].join('')
   }).join('\n')
-  return rules
 }
 
 // Returns modified styles and props
@@ -282,7 +281,7 @@ export function Comp(name, alt = 'View'){
 }
 
 export function fustyle(obj, units){
-
+  if(obj === '' || !obj) return {}
   let classes
 
   switch(typeof obj){
@@ -310,10 +309,10 @@ export function fustyle(obj, units){
       props = prefixProps.shift()
     }
 
-    props.split(',').map(prop => {
+    props && props.split(',').map(prop => {
       prop = styleProps[prop] || prop
       value = styleValues[value] || value
-      if(value.includes('_')) value = value.replace(/\_/g, ' ')
+      if(typeof value === 'string' && value.includes('_')){ value = value.replace(/\_/g, ' ') }
 
       obj[prop] = isNaN(value) && prop !== 'fb' ? themeValue(value, prop) : parseFloat(value)
       if(units && (/^[0-9]+$/).test(obj[prop])) obj[prop] = obj[prop] + units
@@ -328,11 +327,11 @@ export function fustyle(obj, units){
 // finds theme value
 export function themeValue(value, prop, scale = 4){
   if(/^-?s\d*\.?\d{1,2}$/.test(value)){
-    const size = theme.size && (value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value])
+    const size = theme.size && (value && value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value])
     return !size ? Number(value.replace('s', '')) * (scale || theme.scale) : size
   }
 
-  const lowerProp = prop.toLowerCase()
+  const lowerProp = prop.toLowerCase() || ''
   const themeKey = lowerProp.includes('color') ? 'color' : prop
   const themeValues = theme[prop] || theme[themeKey]
   return themeValues && themeValues[value] || value

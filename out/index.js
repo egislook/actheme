@@ -178,7 +178,7 @@ function mediaListiner(listen) {
 function setAlphedColors(theme) {
   return Object.keys(theme.color).reduce(function (obj, name) {
     var color = theme.color[name];
-    obj[name] = color;
+    obj[name] = color || '';
     if (color.includes('rgba') && color.includes('1)')) Object.keys(theme.alphas).forEach(function (key) {
       obj[name + key] = color.replace('1)', theme.alphas[key] + ')');
     });
@@ -232,7 +232,9 @@ function create(comps, compType) {
     }
 
     var mediaKeys = dys && Object.keys(dys).filter(function (key) {
-      return Object.keys(theme.medias).includes(key);
+      return Object.keys(theme.medias).reduce(function (arr, media) {
+        return arr.concat([media, media + 'x']);
+      }, []).includes(key);
     }) || []; // Stores Element to the object with styling
 
     obj[key] = refered ? React.forwardRef(function (props, ref) {
@@ -258,7 +260,7 @@ function getMediaData(mediaKeys, dys) {
   return devicePrefix('web') && mediaKeys.reduce(function (obj, key) {
     if (Array.isArray(dys[key])) return;
     var rules = fustyle(dys[key], 'px');
-    var name = dys[key].replace(/\s/g, '').replace(/\:/g, '');
+    var name = dys[key].replace(/\W/g, '');
     if (!classes[key]) classes[key] = {};
     if (!classes[key][name]) classes[key][name] = Object.keys(rules).map(function (prop) {
       return "".concat(getCssProp(prop), ": ").concat(rules[prop], ";");
@@ -274,13 +276,12 @@ function getCssProp(prop) {
 }
 
 function mediaRules() {
-  var rules = Object.keys(classes).map(function (media) {
-    var rule = media.length === 3 && media.charAt(2) === 'x' ? "max-width: ".concat(theme.medias[media], "px") : "min-width: ".concat(theme.medias[media], "px");
+  return Object.keys(classes).map(function (media) {
+    var rule = media.charAt(2) === 'x' ? "max-width: ".concat(theme.medias[media.slice(0, -1)] - 1, "px") : "min-width: ".concat(theme.medias[media], "px");
     return ["@media only screen and (".concat(rule, ") {\n"), Object.keys(classes[media]).reduce(function (str, name) {
       return str + "\n[data-media-".concat(media, "*=\"").concat(name.replace('.', '\\.'), "\"] { ").concat(classes[media][name], " }");
     }, ''), "\n}"].join('');
   }).join('\n');
-  return rules;
 } // Returns modified styles and props
 
 
@@ -446,6 +447,7 @@ function Comp(name) {
 }
 
 function fustyle(obj, units) {
+  if (obj === '' || !obj) return {};
   var classes;
 
   switch (_typeof(obj)) {
@@ -483,10 +485,14 @@ function fustyle(obj, units) {
       props = prefixProps.shift();
     }
 
-    props.split(',').map(function (prop) {
+    props && props.split(',').map(function (prop) {
       prop = styleProps[prop] || prop;
       value = styleValues[value] || value;
-      if (value.includes('_')) value = value.replace(/\_/g, ' ');
+
+      if (typeof value === 'string' && value.includes('_')) {
+        value = value.replace(/\_/g, ' ');
+      }
+
       obj[prop] = isNaN(value) && prop !== 'fb' ? themeValue(value, prop) : parseFloat(value);
       if (units && /^[0-9]+$/.test(obj[prop])) obj[prop] = obj[prop] + units;
       return prop;
@@ -501,11 +507,11 @@ function themeValue(value, prop) {
   var scale = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 4;
 
   if (/^-?s\d*\.?\d{1,2}$/.test(value)) {
-    var size = theme.size && (value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value]);
+    var size = theme.size && (value && value.includes('-') ? theme.size[value.replace('-', '')] * -1 : theme.size[value]);
     return !size ? Number(value.replace('s', '')) * (scale || theme.scale) : size;
   }
 
-  var lowerProp = prop.toLowerCase();
+  var lowerProp = prop.toLowerCase() || '';
   var themeKey = lowerProp.includes('color') ? 'color' : prop;
   var themeValues = theme[prop] || theme[themeKey];
   return themeValues && themeValues[value] || value;
