@@ -14,7 +14,7 @@ exports.setAlphedColors = setAlphedColors;
 exports.setScaledSizes = setScaledSizes;
 exports.state = state;
 exports.themeValue = themeValue;
-var _excluded = ["type", "comp", "dys", "animated", "refered", "extra"];
+var _excluded = ["type", "comp", "dys", "animated", "refered", "extra", "custom"];
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
@@ -220,6 +220,7 @@ function create(comps, compType) {
         animated = _getProps.animated,
         refered = _getProps.refered,
         extra = _getProps.extra,
+        custom = _getProps.custom,
         compProps = _objectWithoutProperties(_getProps, _excluded); // Sets Node
     // console.log({ type, comp, dys, animated, refered, extra, compProps })
 
@@ -240,12 +241,12 @@ function create(comps, compType) {
     obj[key] = refered ? React.forwardRef(function (props, ref) {
       return /*#__PURE__*/React.createElement(Node, _extends({
         ref: ref
-      }, props, getStyledProps(props, styles, extra, key, dys, dynamics, extras)));
+      }, props, getStyledProps(props, styles, extra, key, dys, dynamics, extras, custom)));
     }) : !mediaKeys.length ? function (props) {
-      return /*#__PURE__*/React.createElement(Node, _extends({}, props, getStyledProps(props, styles, extra, key, dys, dynamics, extras)));
+      return /*#__PURE__*/React.createElement(Node, _extends({}, props, getStyledProps(props, styles, extra, key, dys, dynamics, extras, custom)));
     } : function (props) {
       var mediaList = useMedia();
-      var rest = getStyledProps(props, styles, _objectSpread(_objectSpread({}, extra), mediaList), key, dys, dynamics, extras);
+      var rest = getStyledProps(props, styles, _objectSpread(_objectSpread({}, extra), mediaList), key, dys, dynamics, extras, custom);
       var mediaData = getMediaData(mediaKeys, dys);
       return /*#__PURE__*/React.createElement(Node, _extends({}, props, rest, {
         dataSet: _objectSpread(_objectSpread({}, mediaData), props.dataSet || {})
@@ -285,7 +286,7 @@ function mediaRules() {
 } // Returns modified styles and props
 
 
-function getStyledProps(props, styles, extra, key, dys, dynamics, extras) {
+function getStyledProps(props, styles, extra, key, dys, dynamics, extras, custom) {
   var style = styles[key];
 
   var exProps = _objectSpread({}, extra || {}); // Sets dynamic styling and properties
@@ -305,10 +306,12 @@ function getStyledProps(props, styles, extra, key, dys, dynamics, extras) {
   } // Sets fustyle and style
 
 
-  if (props.fustyle || props.style || exProps.style) style = [style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style]; //RN.StyleSheet.flatten()
+  if (props.fustyle || props.actstyle || props.style || exProps.style) {
+    style = [style, (props.fustyle || props.actstyle) && fustyle(props.fustyle || props.actstyle), exProps.style, props.style]; //RN.StyleSheet.flatten()
+  }
 
   return _objectSpread(_objectSpread({}, exProps), {}, {
-    style: style
+    style: custom ? RN.StyleSheet.flatten(style) : style
   });
 } // Creates Stylesheets for static and dynamic styles
 
@@ -405,7 +408,8 @@ function getProps(item) {
             refered: refered,
             style: !isDys && style,
             dys: isDys && style || dys,
-            extra: extra
+            extra: extra,
+            custom: Comps && Comps[comp]
           };
 
         case 'function':
@@ -413,7 +417,8 @@ function getProps(item) {
             comp: comp,
             style: !isDys && style,
             dys: isDys && style || dys,
-            extra: extra
+            extra: extra,
+            custom: true
           };
       }
 

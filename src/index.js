@@ -114,7 +114,7 @@ export function create(comps, compType){
   // console.log({ styles, dynamics, extras })
   // Creates Elements
   return Object.keys(comps).reduce((obj, key) => {
-    const { type, comp, dys, animated, refered, extra, ...compProps } = getProps(comps[key], 'comp')
+    const { type, comp, dys, animated, refered, extra, custom, ...compProps } = getProps(comps[key], 'comp')
     // Sets Node
     // console.log({ type, comp, dys, animated, refered, extra, compProps })
     const Node = type
@@ -130,12 +130,12 @@ export function create(comps, compType){
 
     // Stores Element to the object with styling
     obj[key] = refered
-      ? React.forwardRef((props, ref) => <Node ref={ref} {...props} {...getStyledProps(props, styles, extra, key, dys, dynamics, extras)} />)
+      ? React.forwardRef((props, ref) => <Node ref={ref} {...props} {...getStyledProps(props, styles, extra, key, dys, dynamics, extras, custom)} />)
       : !mediaKeys.length
-        ? props => <Node {...props} {...getStyledProps(props, styles, extra, key, dys, dynamics, extras)} />
+        ? props => <Node {...props} {...getStyledProps(props, styles, extra, key, dys, dynamics, extras, custom)} />
         : props => {
           const mediaList = useMedia()
-          const rest = getStyledProps(props, styles, { ...extra, ...mediaList }, key, dys, dynamics, extras)
+          const rest = getStyledProps(props, styles, { ...extra, ...mediaList }, key, dys, dynamics, extras, custom)
           const mediaData = getMediaData(mediaKeys, dys)
           return <Node {...props} {...rest} dataSet={{ ...mediaData, ...(props.dataSet || {}) }} />
         }
@@ -172,10 +172,9 @@ function mediaRules(){
 }
 
 // Returns modified styles and props
-function getStyledProps(props, styles, extra, key, dys, dynamics, extras){
+function getStyledProps(props, styles, extra, key, dys, dynamics, extras, custom){
   let style = styles[key]
   const exProps = { ...(extra || {}) }
-
   // Sets dynamic styling and properties
   if(dys){
     const activeProps = Object.keys({ ...exProps, ...props }).filter(prop => !['children'].includes(prop) && !prop.includes('style') && ((Boolean(props[prop]) || Boolean(exProps[prop]))) )
@@ -184,10 +183,11 @@ function getStyledProps(props, styles, extra, key, dys, dynamics, extras){
   }
 
   // Sets fustyle and style
-  if(props.fustyle || props.style || exProps.style)
-    style = [style, props.fustyle && fustyle(props.fustyle), exProps.style, props.style] //RN.StyleSheet.flatten()
+  if(props.fustyle || props.actstyle || props.style || exProps.style){
+    style = [style, (props.fustyle || props.actstyle) && fustyle(props.fustyle || props.actstyle), exProps.style, props.style] //RN.StyleSheet.flatten()
+  }
 
-  return { ...exProps, style }
+  return { ...exProps, style: custom ? RN.StyleSheet.flatten(style) : style }
 }
 
 // Creates Stylesheets for static and dynamic styles
@@ -248,9 +248,9 @@ function getProps(item){
           const animated = comp.includes('Animated')
           const refered = comp.includes('Ref')
           const type = comp.replace('Animated', '').replace('Ref', '')
-          return { type, animated, refered, style: !isDys && style, dys: isDys && style || dys, extra }
+          return { type, animated, refered, style: !isDys && style, dys: isDys && style || dys, extra, custom: Comps && Comps[comp] }
         case 'function':
-          return { comp, style: !isDys && style, dys: isDys && style || dys, extra }
+          return { comp, style: !isDys && style, dys: isDys && style || dys, extra, custom: true }
       }
     default:
       console.log('Actheme', 'incorrect item', item)
